@@ -1,0 +1,53 @@
+case:
+  defendant: person
+  case number: string
+  date: date
+  court date: date
+  test number just because: number
+  guilty: boolean
+  charges: many charge
+  receipts: many receipt
+
+person:
+  first name: string
+  middle name: string
+  last name: string
+  ssn: string
+  birth date: date
+  sex: string
+  race: race
+  height: number
+  weight: number
+  addresses: many address
+
+charge:
+  offense: string
+  fine: number
+
+receipt:
+  paid: number
+  owed: number
+
+race:
+  name: string
+
+address:
+  line 1: string
+  line 2: string
+  city: string
+  state: string
+  zip: string
+
+user:
+  username: string
+  email: string
+  roles: many role
+  permissions: many permission
+
+role:
+  name: string
+  users: many user
+  permissions: many permission
+
+permission:
+  name: string
