@@ -3,6 +3,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
+const mode = !process.env.PROD ? 'development' : 'production'
 // const config: webpack.Configuration = {
 module.exports = {
   entry: './src/index.tsx',
@@ -23,7 +24,7 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
-  mode: 'development',
+  mode,
   devtool: 'inline-source-map',
 }
 
