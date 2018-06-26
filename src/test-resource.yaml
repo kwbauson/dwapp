@@ -1,17 +1,8 @@
-case:
-  defendant: person
-  case number: string
-  date: date
-  court date: date
-  test number just because: number
-  guilty: boolean
-  charges: many charge
-  receipts: many receipt
-
-person:
+defendant:
   first name: string
   middle name: string
   last name: string
+  married: boolean
   ssn: string
   birth date: date
   sex: string
@@ -19,6 +10,15 @@ person:
   height: number
   weight: number
   addresses: many address
+  cases: many case
+
+case:
+  case number: string
+  date: date
+  court date: date
+  guilty: boolean
+  charges: many charge
+  receipts: many receipt
 
 charge:
   offense: string

@@ -11,7 +11,7 @@ export class App extends React.Component {
 
   state = {
     yaml: defaultYaml,
-    tab: 'editor',
+    tab: 'dwapp',
     resource: makeRootResource(defaultYaml),
     data: {},
     parsed: false,
@@ -35,7 +35,13 @@ export class App extends React.Component {
     return (
       parsed && (
         <div>
-          <div>
+          <div
+            style={{
+              borderBottom: '1px solid black',
+              marginBottom: '2px',
+              paddingBottom: '2px',
+            }}
+          >
             <button onClick={this.focusDwApp}>dwapp</button>
             <button onClick={this.focusEditor}>editor</button>
             <button onClick={this.focusData}>data</button>
@@ -47,7 +53,7 @@ export class App extends React.Component {
             <MonacoEditor
               theme="vs-dark"
               language="yaml"
-              height="800"
+              height="600"
               value={this.state.yaml}
               onChange={yaml => this.setState({ yaml })}
               editorDidMount={this.editorDidMount}
@@ -86,7 +92,10 @@ export class App extends React.Component {
 
   focusEditor = () => {
     this.setState({ tab: 'editor' }, () => {
-      this.editor && this.editor.focus()
+      if (this.editor) {
+        this.editor.focus()
+        this.editor.layout()
+      }
     })
   }
 

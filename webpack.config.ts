@@ -3,7 +3,8 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
-const mode = !process.env.PROD ? 'development' : 'production'
+const mode = process.env.PROD ? 'production' : 'development'
+const devtool = process.env.PROD ? false : 'eval-source-map'
 // const config: webpack.Configuration = {
 module.exports = {
   entry: './src/index.tsx',
@@ -20,12 +21,41 @@ module.exports = {
       },
     ],
   },
-  plugins: [new HtmlWebpackPlugin(), new MonacoWebpackPlugin()],
+  plugins: [
+    new HtmlWebpackPlugin(),
+    new MonacoWebpackPlugin({
+      languages: ['yaml'],
+      features: [
+        'bracketMatching',
+        'clipboard',
+        'comment',
+        'contextmenu',
+        'coreCommands',
+        'cursorUndo',
+        'dnd',
+        'find',
+        'folding',
+        'format',
+        'gotoLine',
+        'hover',
+        'inPlaceReplace',
+        'iPadShowKeyboard',
+        'linesOperations',
+        'multicursor',
+        'quickCommand',
+        'smartSelect',
+        'suggest',
+        'transpose',
+        'wordHighlighter',
+        'wordOperations',
+      ],
+    }),
+  ],
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
   mode,
-  devtool: 'inline-source-map',
+  devtool,
 }
 
 // export default config
