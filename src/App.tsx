@@ -3,7 +3,6 @@ import MonacoEditor from 'react-monaco-editor'
 import { editor } from 'monaco-editor'
 import ObjectInspector from 'react-object-inspector'
 import { views } from './test-views'
-import { rootResource } from './test-resource'
 import { makeRootResource, makeJsDataResource } from './resource'
 const defaultYaml = require('raw-loader!./test-resource.yaml')
 
@@ -13,7 +12,7 @@ export class App extends React.Component {
   state = {
     yaml: defaultYaml,
     tab: 'editor',
-    resource: rootResource,
+    resource: makeRootResource(defaultYaml),
     data: {},
     parsed: false,
     parseOnSwitch: true,
