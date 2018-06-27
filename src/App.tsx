@@ -46,14 +46,14 @@ export class App extends React.Component {
             <DwApp {...{ resource, data }} />
           </div>
           <div style={tab === 'editor' ? {} : { display: 'none' }}>
-            {/* <MonacoEditor
+            <MonacoEditor
               theme="vs-dark"
               language="yaml"
               height="600"
               value={this.state.yaml}
               onChange={yaml => this.setState({ yaml })}
               editorDidMount={this.editorDidMount}
-            /> */}
+            />
             <button onClick={this.parseYaml}>parse yaml</button>
             <span>
               <input

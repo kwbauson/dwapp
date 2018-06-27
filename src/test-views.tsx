@@ -206,7 +206,7 @@ function loadOptions(OptionsView: View): View {
 }
 
 const SelectedView: View = loadOptions(
-  ({ resource: { name, properties, many, set }, data, options }) => (
+  ({ resource: { name, many, set }, data, options }) => (
     <div>
       {name}:
       <select

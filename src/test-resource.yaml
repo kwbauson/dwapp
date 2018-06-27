@@ -40,13 +40,11 @@ address:
 user:
   username: string
   email: string
-  roles: many selected role
+  roles: selected role
   permissions: many selected permission
 
 role:
   name: string
-  users: many selected user
-  permissions: many selected permission
 
 permission:
   name: string
