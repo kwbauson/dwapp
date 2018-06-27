@@ -3,6 +3,8 @@ import _ from 'lodash'
 import hash from 'object-hash'
 import { ViewContainer, ViewProps, View } from './view'
 import { makeDataResource } from './resource'
+import { DebugDwApp } from './DebugDwApp'
+import titleCase from 'title-case'
 
 export const views = new ViewContainer()
 
@@ -139,19 +141,19 @@ views.add('optional *', SingleView)
 
 views.add<string>('string', ({ resource: { name, set }, data }) => (
   <span>
-    {name}:
+    {titleCase(name)}:
     <input
       type="text"
       disabled={!set}
-      onChange={e => set!(e.target.value)}
       value={data || ''}
+      onChange={e => set && set(e.target.value)}
     />
   </span>
 ))
 
 views.add<number>('number', ({ resource: { name, set }, data }) => (
   <span>
-    {name}:
+    {titleCase(name)}:
     <input
       type="number"
       disabled={!set}
@@ -165,21 +167,21 @@ views.add<number>('number', ({ resource: { name, set }, data }) => (
 
 views.add<Date>('date', ({ resource: { name, set }, data }) => (
   <span>
-    {name}:
+    {titleCase(name)}:
     <input
       type="date"
       disabled={!set}
+      value={(data && data.toISOString().substring(0, 10)) || ''}
       onChange={({ target: { value } }) =>
         value === '' ? undefined : set!(new Date(value))
       }
-      value={(data && data.toISOString().substring(0, 10)) || ''}
     />
   </span>
 ))
 
 views.add<boolean>('boolean', ({ resource: { name, set }, data }) => (
   <span>
-    {name}:
+    {titleCase(name)}:
     <input
       type="checkbox"
       disabled={!set}
@@ -208,7 +210,7 @@ function loadOptions(OptionsView: View): View {
 const SelectedView: View = loadOptions(
   ({ resource: { name, many, set }, data, options }) => (
     <div>
-      {name}:
+      {titleCase(name)}:
       <select
         value={data || (!many ? '' : [])}
         multiple={many}
@@ -235,3 +237,4 @@ views.add('$root', ({ resource }) => {
   const View = views.get('*')
   return <View resource={{ ...resource, flags: { open: true, embed: true } }} />
 })
+views.add('$root', DebugDwApp)

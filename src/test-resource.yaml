@@ -3,11 +3,10 @@ defendant:
   middle name: string
   last name: string
   married: boolean
-  ssn: string
+  social security number: string
   birth date: date
   race: selected race
   height: number
-  weight: number
   address: address
   cases: many case
 

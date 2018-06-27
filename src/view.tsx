@@ -41,6 +41,7 @@ export class ViewContainer {
 
   get<Get = any, Set = Get>(
     selector: string | Selector | Resource,
+    notView?: View,
   ): View<Get, Set> {
     let realSelector: Selector
     if (typeof selector === 'string') {
@@ -53,7 +54,10 @@ export class ViewContainer {
     const found = this.views
       .slice()
       .reverse()
-      .find(x => match(x.selector, realSelector))
+      .find(
+        x =>
+          (!notView || x.view !== notView) && match(x.selector, realSelector),
+      )
     return found ? found.view : this.defaultView
   }
 

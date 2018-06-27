@@ -21,7 +21,7 @@ const config = {
     ],
   },
   plugins: [
-    new HtmlWebpackPlugin(),
+    new HtmlWebpackPlugin({ title: 'DwApp ' }),
     new MonacoWebpackPlugin({
       languages: ['yaml'],
       features: [

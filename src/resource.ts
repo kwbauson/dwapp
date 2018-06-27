@@ -147,7 +147,6 @@ export function makeDataResource<Get = any, Set = Get>(
 export function makeJsDbResource(
   root: Resource,
   data: { [x: string]: any[] },
-  onSet: (data: any) => void,
 ): Resource {
   return {
     ...root,
@@ -158,13 +157,11 @@ export function makeJsDbResource(
           get: async () => data[resource.type] || [],
           set: async (x: any) => {
             const records = data[resource.type] || []
-            const newData = { ...data, [resource.type]: records.concat([x]) }
-            onSet(newData)
+            data[resource.type] = records.concat([x])
           },
           all: async () => data[resource.type] || [],
         },
         data,
-        onSet,
       ),
     ),
   }
