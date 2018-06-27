@@ -5,11 +5,10 @@ defendant:
   married: boolean
   ssn: string
   birth date: date
-  sex: string
-  race: race
+  race: selected race
   height: number
   weight: number
-  addresses: many address
+  address: address
   cases: many case
 
 case:
@@ -41,13 +40,13 @@ address:
 user:
   username: string
   email: string
-  roles: many role
-  permissions: many permission
+  roles: many selected role
+  permissions: many selected permission
 
 role:
   name: string
-  users: many user
-  permissions: many permission
+  users: many selected user
+  permissions: many selected permission
 
 permission:
   name: string

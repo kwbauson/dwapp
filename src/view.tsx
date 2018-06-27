@@ -1,5 +1,5 @@
 import React from 'react'
-import { Resource } from './resource'
+import { Resource, parseProperty } from './resource'
 
 export type View<Get = any, Set = Get> = React.ComponentType<
   ViewProps<Get, Set>
@@ -8,37 +8,29 @@ export type View<Get = any, Set = Get> = React.ComponentType<
 export interface ViewProps<Get = any, Set = Get> {
   resource: Resource<Get, Set>
   data?: Get
+  options?: Get[]
 }
 
 export interface Selector {
   type: string
+  readonly: boolean
+  optional: boolean
   many: boolean
-  // create: boolean
+  selected: boolean
 }
 
 export function match(a: Selector, b: Selector): boolean {
-  const typeMatches = a.type === '*' || a.type === b.type
   return (
+    a.readonly === b.readonly &&
+    a.optional === b.optional &&
     a.many === b.many &&
-    // a.optional === b.optional &&
-    // (b.create ? a.create === b.create : true) &&
-    typeMatches
+    a.selected === b.selected &&
+    (a.type === '*' || a.type === b.type)
   )
 }
 
 export function parseSelector(selector: string): Selector {
-  const parts = selector.split(',')
-  const typeParts = parts[0].split(' ')
-  const type = typeParts[typeParts.length - 1]
-  const typeOptions = typeParts.slice(0, typeParts.length - 1)
-  // const options = parts.slice(1).map(x => x.split(' '))
-  return {
-    type,
-    many: typeOptions.includes('many'),
-    // optional: typeOptions.includes('optional'),
-    // create: typeOptions.includes('create'),
-    // options,
-  }
+  return parseProperty('$selector', selector)
 }
 
 export class ViewContainer {

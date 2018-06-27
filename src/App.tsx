@@ -3,7 +3,7 @@ import MonacoEditor from 'react-monaco-editor'
 import { editor } from 'monaco-editor'
 import ObjectInspector from 'react-object-inspector'
 import { views } from './test-views'
-import { makeRootResource, makeJsDataResource } from './resource'
+import { makeRootResource, defaultResource, makeJsDbResource } from './resource'
 const defaultYaml = require('raw-loader!./test-resource.yaml')
 
 export class App extends React.Component {
@@ -12,7 +12,7 @@ export class App extends React.Component {
   state = {
     yaml: defaultYaml,
     tab: 'dwapp',
-    resource: makeRootResource(defaultYaml),
+    resource: defaultResource,
     data: {},
     parsed: false,
     parseOnSwitch: true,
@@ -24,13 +24,9 @@ export class App extends React.Component {
 
   render() {
     const { tab, data, parsed } = this.state
-    const resource = {
-      ...this.state.resource,
-      set: async (x?: any) => {
-        this.state.resource.set && (await this.state.resource.set(x))
-        this.setState(this.state)
-      },
-    }
+    const resource = makeJsDbResource(this.state.resource, this.state.data, x =>
+      this.setState({ data: x }),
+    )
     const DwApp = views.get(resource)
     return (
       parsed && (
@@ -50,14 +46,14 @@ export class App extends React.Component {
             <DwApp {...{ resource, data }} />
           </div>
           <div style={tab === 'editor' ? {} : { display: 'none' }}>
-            <MonacoEditor
+            {/* <MonacoEditor
               theme="vs-dark"
               language="yaml"
               height="600"
               value={this.state.yaml}
               onChange={yaml => this.setState({ yaml })}
               editorDidMount={this.editorDidMount}
-            />
+            /> */}
             <button onClick={this.parseYaml}>parse yaml</button>
             <span>
               <input
@@ -102,14 +98,15 @@ export class App extends React.Component {
   focusData = () => this.focusTab('data')
 
   parseYaml = () => {
-    const { data } = this.state
-    const resource = makeRootResource(this.state.yaml)
+    const { yaml, data } = this.state
+    const resource = makeRootResource(yaml)
     this.setState({ resource, parsed: true })
-    Object.assign(window, { resource, data })
+    Object.assign(window, { resource, data, views })
   }
 
   clearData = () => {
     this.setState({ data: {} })
+    Object.assign(window, { data: {} })
   }
 
   private focusTab(tab: string) {

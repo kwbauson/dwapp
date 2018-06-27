@@ -3,10 +3,9 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
-const mode = process.env.PROD ? 'production' : 'development'
-const devtool = process.env.PROD ? false : 'eval-source-map'
 // const config: webpack.Configuration = {
-module.exports = {
+
+const config = {
   entry: './src/index.tsx',
   module: {
     rules: [
@@ -54,8 +53,15 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
-  mode,
-  devtool,
+  mode: 'development',
+  devtool: 'cheap-module-eval-source-map',
 }
+
+const prodConfig = {
+  mode: 'production',
+  devtool: false,
+}
+
+module.exports = process.env.PROD ? { ...config, ...prodConfig } : config
 
 // export default config

@@ -1,20 +1,39 @@
 import _ from 'lodash'
 import jsYaml from 'js-yaml'
 import pluralize from 'pluralize'
+import shortid from 'shortid'
+import hash from 'object-hash'
 
 export interface Resource<Get = any, Set = Get> {
   name: string
   type: string
   properties: Resource[]
-  many: boolean
-  optional: boolean
-  create: boolean
   readonly: boolean
+  optional: boolean
+  many: boolean
+  selected: boolean
   flags: { [x: string]: boolean }
   options: string[][]
   get: () => Promise<Get | undefined>
   set?: (x?: Set) => Promise<void>
   all: () => Promise<Get[]>
+}
+
+export const defaultResource: Resource = {
+  name: '$name',
+  type: '$type',
+  properties: [],
+  readonly: false,
+  optional: false,
+  many: false,
+  selected: false,
+  flags: {},
+  options: [],
+  get: async () => {},
+  set: async (x?: any) => {
+    console.log(JSON.stringify(x)) // FIXME
+  },
+  all: async () => [],
 }
 
 export function makeResource<Get = any, Set = Get>(
@@ -23,31 +42,19 @@ export function makeResource<Get = any, Set = Get>(
   partial: Partial<Resource<Get, Set>> = {},
 ): Resource<Get, Set> {
   const typeName = typeof type === 'string' ? type : type.type
-  const defaultResource: Resource<Get, Set> = {
+  const resource: Resource<Get, Set> = {
+    ...defaultResource,
     name,
     type: typeName,
-    properties: [],
-    many: false,
-    optional: false,
-    create: false,
-    readonly: false,
-    flags: {},
-    options: [],
-    get: () => Promise.resolve(undefined),
-    set: (x?: Set) => {
-      console.log(JSON.stringify(x))
-      return Promise.resolve()
-    },
-    all: () => Promise.resolve([]),
   }
   if (typeof type === 'string') {
     return {
-      ...defaultResource,
+      ...resource,
       ...partial,
     }
   } else {
     return {
-      ...defaultResource,
+      ...resource,
       ...type,
       name,
       ...partial,
@@ -55,42 +62,40 @@ export function makeResource<Get = any, Set = Get>(
   }
 }
 
-export function makeJsDataResource<Get, Set>(
-  resource: Resource<Get, Set>,
-  data: Set,
-  onSet?: (data?: Set) => void,
-): Resource {
+export function parseProperty(name: string, input: string): Resource {
+  const parts = input.split(',')
+  const typeParts = parts[0].split(' ')
+  const type = typeParts[typeParts.length - 1]
+  const typeOptions = typeParts.slice(0, typeParts.length - 1)
+  const options = parts.slice(1).map(x => x.split(' '))
   return {
-    ...resource,
-    properties: resource.properties.map(p => {
-      if (!p.many && p.properties.length > 0) {
-        const newData = {}
-        if (!data.hasOwnProperty(p.name)) {
-          ;(data as any)[p.name] = newData
-        }
-        return makeJsDataResource(p, newData, () => onSet && onSet(data))
-      } else {
-        return { ...p, get: () => Promise.resolve([]) }
-      }
-    }),
-    get: () => Promise.resolve(_.cloneDeep(data)),
-    set: (x?: Set) => {
-      onSet && onSet(data)
-      return Promise.resolve()
-    },
+    ...defaultResource,
+    name,
+    type,
+    readonly: typeOptions.includes('readonly'),
+    optional: typeOptions.includes('optional'),
+    many: typeOptions.includes('many'),
+    selected: typeOptions.includes('selected'),
+    options,
   }
 }
 
 export function makeRootResource(
   definition: string | { [x: string]: any },
-  root = true,
 ): Resource {
+  let obj: { [x: string]: any }
   if (typeof definition === 'string') {
-    const obj = jsYaml.load(definition)!
-    return makeRootResource(obj)
+    obj = jsYaml.load(definition)!
+  } else {
+    obj = definition
   }
+  const untied = makeRootResourceHelper(obj)
+  return tieRootResource(untied, untied)
+}
+
+function makeRootResourceHelper(definition: { [x: string]: any }): Resource {
   const rootProperties = Object.keys(definition).map(key => {
-    const name = root ? pluralize(key) : key
+    const name = pluralize(key)
     const obj = definition[key]
     const properties = Object.keys(obj).map(k => parseProperty(k, obj[k]))
     return makeResource(name, key, { many: true, properties })
@@ -98,23 +103,69 @@ export function makeRootResource(
   return makeResource('$root', '$root', { properties: rootProperties })
 }
 
-function parseProperty(name: string, input: string): Resource {
-  const parts = input.split(',')
-  const typeParts = parts[0].split(' ')
-  const type = typeParts[typeParts.length - 1]
-  const typeOptions = typeParts.slice(0, typeParts.length - 1)
-  const options = parts.slice(1).map(x => x.split(' '))
+function tieRootResource(resource: Resource, root: Resource): Resource {
   return {
-    name,
-    type,
-    many: typeOptions.includes('many'),
-    optional: typeOptions.includes('optional'),
-    create: typeOptions.includes('create'),
-    options,
-    properties: [],
-    readonly: typeOptions.includes('readonly'),
-    flags: {},
-    get: () => Promise.resolve(),
-    all: () => Promise.resolve([]),
+    ...resource,
+    properties: resource.properties.map(prop => {
+      if (prop.selected) {
+        return prop
+      } else {
+        const found = root.properties.find(x => x.type === prop.type)
+        const typeProps = found ? found.properties : prop.properties
+        return tieRootResource({ ...prop, properties: typeProps }, root)
+      }
+    }),
+  }
+}
+
+export function makeDataResource<Get = any, Set = Get>(
+  resource: Resource<Get, Set>,
+  data: Set,
+  onSet: (data?: Set) => void,
+): Resource {
+  return {
+    ...resource,
+    properties: resource.properties.map(prop => {
+      if (prop.many) {
+        return prop
+      } else {
+        return {
+          ...prop,
+          set: async (x: Set) => {
+            // FIXME?
+            const newData = { ...(data as any), [prop.name]: x }
+            console.log(newData)
+            onSet(newData)
+          },
+        }
+      }
+    }),
+    get: async () => data,
+  }
+}
+
+export function makeJsDbResource(
+  root: Resource,
+  data: { [x: string]: any[] },
+  onSet: (data: any) => void,
+): Resource {
+  return {
+    ...root,
+    properties: root.properties.map(resource =>
+      makeJsDbResource(
+        {
+          ...resource,
+          get: async () => data[resource.type] || [],
+          set: async (x: any) => {
+            const records = data[resource.type] || []
+            const newData = { ...data, [resource.type]: records.concat([x]) }
+            onSet(newData)
+          },
+          all: async () => data[resource.type] || [],
+        },
+        data,
+        onSet,
+      ),
+    ),
   }
 }
