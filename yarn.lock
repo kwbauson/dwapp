@@ -174,12 +174,6 @@
   dependencies:
     csstype "^2.2.0"
 
-"@types/recompose@^0.26.1":
-  version "0.26.1"
-  resolved "https://registry.yarnpkg.com/@types/recompose/-/recompose-0.26.1.tgz#a21c5728dea223551882b763335cb1bc641bf1d0"
-  dependencies:
-    "@types/react" "*"
-
 "@types/relateurl@*":
   version "0.2.28"
   resolved "https://registry.yarnpkg.com/@types/relateurl/-/relateurl-0.2.28.tgz#6bda7db8653fa62643f5ee69e9f69c11a392e3a6"
@@ -2754,15 +2748,6 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
-material-ui-pickers@^1.0.0-rc.10:
-  version "1.0.0-rc.10"
-  resolved "https://registry.yarnpkg.com/material-ui-pickers/-/material-ui-pickers-1.0.0-rc.10.tgz#c6917c9f8e0ad6e318b7eac04ffb46aae2bd0f3f"
-  dependencies:
-    "@types/recompose" "^0.26.1"
-    babel-runtime "^6.26.0"
-    react-text-mask "^5.3.1"
-    recompose "^0.27.1"
-
 math-expression-evaluator@^1.2.14:
   version "1.2.17"
   resolved "https://registry.yarnpkg.com/math-expression-evaluator/-/math-expression-evaluator-1.2.17.tgz#de819fdbcd84dccd8fae59c6aeb79615b9d266ac"
@@ -3687,7 +3672,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.6, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2:
+prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2:
   version "15.6.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
   dependencies:
@@ -3854,12 +3839,6 @@ react-scrolllock@^3.0.1:
   dependencies:
     exenv "^1.2.2"
 
-react-text-mask@^5.3.1:
-  version "5.4.2"
-  resolved "https://registry.yarnpkg.com/react-text-mask/-/react-text-mask-5.4.2.tgz#6c9ecce97d354698557d14699963081f9621e997"
-  dependencies:
-    prop-types "^15.5.6"
-
 react-transition-group@^2.2.1:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-2.4.0.tgz#1d9391fabfd82e016f26fabd1eec329dbd922b5a"
@@ -3923,7 +3902,7 @@ readdirp@^2.0.0:
     readable-stream "^2.0.2"
     set-immediate-shim "^1.0.1"
 
-recompose@^0.27.0, recompose@^0.27.1:
+recompose@^0.27.0:
   version "0.27.1"
   resolved "https://registry.yarnpkg.com/recompose/-/recompose-0.27.1.tgz#1a49e931f183634516633bbb4f4edbfd3f38a7ba"
   dependencies:
