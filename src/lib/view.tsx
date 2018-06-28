@@ -35,10 +35,11 @@ export function parseSelector(selector: string): Selector {
   return parseProperty('$selector', selector)
 }
 
+export const defaultView: View = () => (
+  <div style={{ background: 'red' }}>NO VIEW FOUND</div>
+)
+
 export class ViewContainer {
-  private defaultView: View = () => (
-    <div style={{ background: 'red' }}>NO VIEW FOUND</div>
-  )
   private views: { selector: Selector; view: View }[] = []
 
   get<Get = any, Set = Get>(
@@ -60,7 +61,7 @@ export class ViewContainer {
         x =>
           (!notView || x.view !== notView) && match(x.selector, realSelector),
       )
-    return found ? found.view : this.defaultView
+    return found ? found.view : defaultView
   }
 
   add<Get = any, Set = Get>(selector: string | Selector, view: View<Get, Set>) {

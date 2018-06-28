@@ -1,22 +1,8 @@
 import React from 'react'
-import { ViewContainer, manyDataView, dataView, loadOptions } from './lib/view'
-import titleCase from 'title-case'
 import hash from 'object-hash'
-import {
-  TextField,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Collapse,
-  Card,
-  CardHeader,
-  CardContent,
-  CardActions,
-} from '@material-ui/core'
-import UpArrowIcon from '@material-ui/icons/ArrowDropUp'
-import DownArrowIcon from '@material-ui/icons/ArrowDropDown'
-import CreateIcon from '@material-ui/icons/Create'
-import RefreshIcon from '@material-ui/icons/Refresh'
+import { ViewContainer, dataView, loadOptions, manyDataView } from './lib/view'
+import titleCase from 'title-case'
+import { Input, Button } from 'semantic-ui-react'
 
 export const views = new ViewContainer()
 
@@ -27,29 +13,21 @@ const ManyView = manyDataView(
       <div style={{ padding: '4px 4px 4px 0px' }}>{child}</div>
     ))
     return (
-      <Card>
-        <CardHeader
-          title={titleCase(name)}
-          action={
-            <IconButton onClick={toggle}>
-              {open ? <UpArrowIcon /> : <DownArrowIcon />}
-            </IconButton>
-          }
-        />
-        <CardContent>{open && children}</CardContent>
-        {open && (
-          <CardActions>
-            <IconButton onClick={refresh}>
-              <RefreshIcon />
-            </IconButton>
-            {add && (
-              <IconButton onClick={add}>
-                <CreateIcon />
-              </IconButton>
-            )}
-          </CardActions>
-        )}
-      </Card>
+      <div style={{ border: '1px solid black', padding: '4px' }}>
+        <span>
+          <button onClick={toggle} style={{ width: '25px' }}>
+            {open ? '-' : '+'}
+          </button>
+          <span style={{ paddingLeft: '4px' }}>{name}</span>
+          {open && (
+            <span style={{ paddingLeft: '4px' }}>
+              <Button onClick={refresh}>refresh (semantic)</Button>
+              {add && <button onClick={add}>add</button>}
+            </span>
+          )}
+        </span>
+        {open && children}
+      </div>
     )
   },
 )
@@ -101,52 +79,53 @@ views.add('*', SingleView)
 views.add('optional *', SingleView)
 
 views.add<string>('string', ({ resource: { name, set }, data }) => (
-  <TextField
+  <Input
     label={titleCase(name)}
     type="text"
     disabled={!set}
     value={data || ''}
-    onChange={e => set && set(e.target.value)}
+    onChange={e => set && set(e.currentTarget.value)}
   />
 ))
 
 views.add<number>('number', ({ resource: { name, set }, data }) => (
-  <TextField
-    label={titleCase(name)}
-    type="number"
-    disabled={!set}
-    onChange={({ target: { value } }) =>
-      value === '' ? undefined : set!(parseFloat(value))
-    }
-    value={data || ''}
-  />
+  <span>
+    {titleCase(name)}:
+    <input
+      type="number"
+      disabled={!set}
+      onChange={({ target: { value } }) =>
+        value === '' ? undefined : set!(parseFloat(value))
+      }
+      value={data || ''}
+    />
+  </span>
 ))
 
 views.add<Date>('date', ({ resource: { name, set }, data }) => (
-  <TextField
-    label={titleCase(name)}
-    type="date"
-    disabled={!set}
-    value={(data && data.toISOString().substring(0, 10)) || ''}
-    onChange={({ target: { value } }) =>
-      value === '' ? undefined : set!(new Date(value))
-    }
-    InputLabelProps={{ shrink: true }}
-  />
+  <span>
+    {titleCase(name)}:
+    <input
+      type="date"
+      disabled={!set}
+      value={(data && data.toISOString().substring(0, 10)) || ''}
+      onChange={({ target: { value } }) =>
+        value === '' ? undefined : set!(new Date(value))
+      }
+    />
+  </span>
 ))
 
 views.add<boolean>('boolean', ({ resource: { name, set }, data }) => (
-  <FormControlLabel
-    label={titleCase(name)}
-    control={
-      <Switch
-        type="checkbox"
-        disabled={!set}
-        checked={data || false}
-        onChange={({ target: { checked } }) => set!(checked)}
-      />
-    }
-  />
+  <span>
+    {titleCase(name)}:
+    <input
+      type="checkbox"
+      disabled={!set}
+      checked={data || false}
+      onChange={({ target: { checked } }) => set!(checked)}
+    />
+  </span>
 ))
 
 const SelectedView = loadOptions(

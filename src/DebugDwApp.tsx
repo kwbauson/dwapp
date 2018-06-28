@@ -4,7 +4,8 @@ import { makeRootResource, makeJsDbResource } from './lib/resource'
 import { editor } from 'monaco-editor'
 import { views as plainViews } from './plain-test-views'
 import { views as materialViews } from './material-test-views'
-import { views as atlaskitViews } from './atlaskit-test-views'
+import { views as antdViews } from './antd-test-views'
+import { views as semanticViews } from './semantic-test-views'
 const defaultYaml = require('raw-loader!./test-resource.yaml')
 
 export class DebugDwApp extends React.Component<ViewProps> {
@@ -16,7 +17,7 @@ export class DebugDwApp extends React.Component<ViewProps> {
     data: {},
     parsed: false,
     parseOnSwitch: true,
-    views: materialViews,
+    views: semanticViews,
   }
   componentDidMount() {
     this.parseYaml()
@@ -39,7 +40,8 @@ export class DebugDwApp extends React.Component<ViewProps> {
             <span style={{ paddingRight: '50px' }} />
             <button onClick={this.setViews(plainViews)}>plain</button>
             <button onClick={this.setViews(materialViews)}>material</button>
-            <button onClick={this.setViews(atlaskitViews)}>atlaskit</button>
+            <button onClick={this.setViews(antdViews)}>antd</button>
+            <button onClick={this.setViews(semanticViews)}>semantic</button>
           </div>
           <div style={tab === 'dwapp' ? {} : { display: 'none' }}>
             <DwApp
