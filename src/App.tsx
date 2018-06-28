@@ -1,6 +1,6 @@
 import React from 'react'
-import { views } from './test-views'
-import { defaultResource } from './resource'
+import { views } from './views'
+import { defaultResource } from './lib/resource'
 
 export const App = () => {
   const View = views.get('$root')
