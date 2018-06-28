@@ -18,6 +18,13 @@ const config = {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
       },
+      {
+        test: [/\.eot$/, /\.ttf$/, /\.svg$/, /\.woff$/, /\.woff2$/, /\.png$/],
+        loader: 'file-loader',
+        options: {
+          name: 'assets/[name].[hash:8].[ext]',
+        },
+      },
     ],
   },
   plugins: [

@@ -2,7 +2,8 @@ import React from 'react'
 import hash from 'object-hash'
 import { ViewContainer, dataView, loadOptions, manyDataView } from './lib/view'
 import titleCase from 'title-case'
-import { Input, Button } from 'semantic-ui-react'
+import { Input, Button, Checkbox, Icon } from 'semantic-ui-react'
+import 'semantic-ui-css/semantic.min.css'
 
 export const views = new ViewContainer()
 
@@ -21,8 +22,14 @@ const ManyView = manyDataView(
           <span style={{ paddingLeft: '4px' }}>{name}</span>
           {open && (
             <span style={{ paddingLeft: '4px' }}>
-              <Button onClick={refresh}>refresh (semantic)</Button>
-              {add && <button onClick={add}>add</button>}
+              <Button onClick={refresh}>refresh</Button>
+              {add && (
+                <Button onClick={add}>
+                  <Button.Content>
+                    <Icon name="add circle" />
+                  </Button.Content>
+                </Button>
+              )}
             </span>
           )}
         </span>
@@ -118,12 +125,12 @@ views.add<Date>('date', ({ resource: { name, set }, data }) => (
 
 views.add<boolean>('boolean', ({ resource: { name, set }, data }) => (
   <span>
-    {titleCase(name)}:
-    <input
-      type="checkbox"
+    <Checkbox
+      slider
+      label={titleCase(name)}
       disabled={!set}
       checked={data || false}
-      onChange={({ target: { checked } }) => set!(checked)}
+      onChange={({ currentTarget: { value } }) => set!(value === 'true')}
     />
   </span>
 ))

@@ -2,8 +2,10 @@ import React from 'react'
 import hash from 'object-hash'
 import { ViewContainer, dataView, loadOptions, manyDataView } from './lib/view'
 import titleCase from 'title-case'
-import { Input, Checkbox, Button } from 'antd'
+import { Input, Checkbox, Button, DatePicker, Icon } from 'antd'
 import FormItem from 'antd/lib/form/FormItem'
+import 'antd/dist/antd.css'
+import moment from 'moment'
 
 export const views = new ViewContainer()
 
@@ -22,8 +24,8 @@ const ManyView = manyDataView(
           <span style={{ paddingLeft: '4px' }}>{name}</span>
           {open && (
             <span style={{ paddingLeft: '4px' }}>
-              <Button onClick={refresh}>refresh (antd)</Button>
-              {add && <button onClick={add}>add</button>}
+              <Button onClick={refresh}>refresh</Button>
+              {add && <Button onClick={add} icon="file-add" />}
             </span>
           )}
         </span>
@@ -82,7 +84,6 @@ views.add('optional *', SingleView)
 views.add<string>('string', ({ resource: { name, set }, data }) => (
   <FormItem label={titleCase(name)}>
     <Input
-      type="text"
       disabled={!set}
       value={data || ''}
       onChange={e => set && set(e.currentTarget.value)}
@@ -104,18 +105,10 @@ views.add<number>('number', ({ resource: { name, set }, data }) => (
   </span>
 ))
 
-views.add<Date>('date', ({ resource: { name, set }, data }) => (
-  <span>
-    {titleCase(name)}:
-    <input
-      type="date"
-      disabled={!set}
-      value={(data && data.toISOString().substring(0, 10)) || ''}
-      onChange={({ target: { value } }) =>
-        value === '' ? undefined : set!(new Date(value))
-      }
-    />
-  </span>
+views.add<moment.Moment>('date', ({ resource: { name, set }, data }) => (
+  <FormItem label={titleCase(name)}>
+    <DatePicker disabled={!set} defaultValue={data} onChange={e => set!(e)} />
+  </FormItem>
 ))
 
 views.add<boolean>('boolean', ({ resource: { name, set }, data }) => (

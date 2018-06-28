@@ -18,7 +18,7 @@ export class DebugDwApp extends React.Component<ViewProps> {
     data: {},
     parsed: false,
     parseOnSwitch: true,
-    views: semanticViews,
+    views: plainViews,
   }
   componentDidMount() {
     this.parseYaml()
