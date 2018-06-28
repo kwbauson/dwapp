@@ -2,6 +2,7 @@ import React from 'react'
 import { ViewProps, ViewContainer } from './lib/view'
 import { makeRootResource, makeJsDbResource } from './lib/resource'
 import { editor } from 'monaco-editor'
+import MonacoEditor from 'react-monaco-editor'
 import { views as plainViews } from './plain-test-views'
 import { views as materialViews } from './material-test-views'
 import { views as antdViews } from './antd-test-views'
@@ -51,6 +52,14 @@ export class DebugDwApp extends React.Component<ViewProps> {
             />
           </div>
           <div style={tab === 'editor' ? {} : { display: 'none' }}>
+            <MonacoEditor
+              theme="vs-dark"
+              language="yaml"
+              height="800"
+              value={this.state.yaml}
+              onChange={yaml => this.setState({ yaml })}
+              editorDidMount={this.editorDidMount}
+            />
             <button onClick={this.parseYaml}>parse yaml</button>
             <span>
               <input
