@@ -166,7 +166,10 @@ export function manyDataView<Get = any, Set = Get>(
               .concat([d])
               .concat(data.slice(i + 1))
           }
-          this.setState({ data: newData })
+          this.setState(
+            { data: newData },
+            () => this.props.resource.set && this.props.resource.set(newData),
+          )
         }
         const r = { ...resource, set, name: `${i}`, flags: { open: true } }
         return {

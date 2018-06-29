@@ -156,8 +156,7 @@ export function makeJsDbResource(
           ...resource,
           get: async () => data[resource.type] || [],
           set: async (x: any) => {
-            const records = data[resource.type] || []
-            data[resource.type] = records.concat([x])
+            data[resource.type] = x
           },
           all: async () => data[resource.type] || [],
         },
